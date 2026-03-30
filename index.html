@@ -59,14 +59,14 @@
     // ------------------------
     // 1. Supabase Setup (Safe)
     // ------------------------
-    const supabaseUrl = 'https://YOUR_PROJECT_REF.supabase.co'; // <-- replace
-    const supabaseKey = 'YOUR_ANON_KEY'; // <-- replace
+    const supabaseUrl = 'https://gjgspxlcwnfntuejbcsr.supabase.co';
+    const supabaseKey = 'k:sb_publishable_R3_AyHsNRCM8HenZ_-fBsA_LArXKMXs';
 
     if (typeof supabase === "undefined") {
       var supabase = supabase.createClient(supabaseUrl, supabaseKey);
     }
 
-    const bucketName = 'my-public-bucket'; // <-- replace with your bucket
+    const bucketName = 'my-public-bucket'; // <-- replace with your bucket name
     const fileListEl = document.getElementById('fileList');
     const uploadBtn = document.getElementById('uploadBtn');
 
