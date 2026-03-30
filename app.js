@@ -1,25 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>File Upload App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 30px auto;
+      padding: 20px;
+      background-color: #f9f9f9;
+    }
+    h2 {
+      color: #333;
+    }
+    input[type="file"] {
+      margin-bottom: 10px;
+    }
+    button {
+      padding: 6px 12px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-left: 5px;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    ul {
+      list-style-type: none;
+      padding-left: 0;
+    }
+    li {
+      margin: 5px 0;
+    }
+    a {
+      text-decoration: none;
+      color: #007bff;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
 
-const SUPABASE_URL = "https://gjgspxlcwnfntuejbcsr.supabase.co";
-const SUPABASE_KEY = "sb_publishable_R3_AyHsNRCM8HenZ_-fBsA_LArXKMXs";
+  <h2>Upload File</h2>
+  <input type="file" id="fileInput" />
+  <button onclick="uploadFile()">Upload</button>
 
-const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  <h2>Uploaded Files</h2>
+  <ul id="fileList"></ul>
 
-window.uploadFile = async function () {
-  const file = document.getElementById("fileInput").files[0];
+  <!-- Supabase JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script>
+    // ------------------------
+    // 1. Supabase Setup
+    // ------------------------
+    const supabaseUrl = 'https://YOUR_PROJECT_REF.supabase.co'; // <-- Apna project URL
+    const supabaseKey = 'YOUR_ANON_KEY'; // <-- Apna anon key
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-  if (!file) {
-    alert("Select file!");
-    return;
-  }
+    const bucketName = 'my-public-bucket'; // <-- Apna bucket name
+    const fileListEl = document.getElementById('fileList');
 
-  const { data, error } = await client.storage
-    .from("files")
-    .upload(file.name, file, { upsert: true });
+    // ------------------------
+    // 2. Upload File Function
+    // ------------------------
+    async function uploadFile() {
+      const fileInput = document.getElementById('fileInput');
+      const file = fileInput.files[0];
 
-  if (error) {
-    console.error(error);
-    alert("Upload failed: " + error.message);
-  } else {
-    alert("Upload success!");
-  }
-};
+      if (!file) {
+        alert('Please select a file');
+        return;
+      }
+
+      const { data, error } = await supabase
+        .storage
+        .from(bucketName)
+        .upload(file.name, file, { upsert: true }); // upsert true = overwrite if same name
+
+      if (error) {
+        console.error('Upload failed:', error.message);
+        alert('Upload failed: ' + error.message);
+      } else {
+        alert('Upload successful!');
+        fileInput.value = ''; // clear input
+        loadFileList(); // refresh file list
+      }
+    }
+
+    // ------------------------
+    // 3. Load Uploaded Files
+    // ------------------------
+    async function loadFileList() {
+      const { data: files, error } = await supabase
+        .storage
+        .from(bucketName)
+        .list('', { limit: 100, offset: 0 }); // '' = root folder
+
+      if (error) {
+        console.error('Error fetching files:', error.message);
+        return;
+      }
+
+      fileListEl.innerHTML = ''; // clear previous list
+
+      files.forEach(file => {
+        const { publicUrl } = supabase
+          .storage
+          .from(bucketName)
+          .getPublicUrl(file.name);
+
+        const li = document.createElement('li');
+        li.innerHTML = `<a href="${publicUrl}" target="_blank">${file.name}</a>`;
+        fileListEl.appendChild(li);
+      });
+    }
+
+    // ------------------------
+    // 4. Load file list on page load
+    // ------------------------
+    window.onload = loadFileList;
+  </script>
+
+</body>
+</html>
