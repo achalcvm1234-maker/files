@@ -3,28 +3,69 @@
 <head>
   <meta charset="UTF-8">
   <title>File Upload App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 30px auto;
+      padding: 20px;
+      background-color: #f9f9f9;
+    }
+    h2 {
+      color: #333;
+    }
+    input[type="file"] {
+      margin-bottom: 10px;
+    }
+    button {
+      padding: 6px 12px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-left: 5px;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    ul {
+      list-style-type: none;
+      padding-left: 0;
+    }
+    li {
+      margin: 5px 0;
+    }
+    a {
+      text-decoration: none;
+      color: #007bff;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
 
   <h2>Upload File</h2>
   <input type="file" id="fileInput" />
-  <button onclick="uploadFile()">Upload</button>
+  <button id="uploadBtn">Upload</button>
 
   <h2>Uploaded Files</h2>
   <ul id="fileList"></ul>
 
   <!-- Supabase JS -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/supabase.min.js"></script>
   <script>
     // ------------------------
     // 1. Supabase Setup
     // ------------------------
-    const supabaseUrl = 'https://YOUR_PROJECT_REF.supabase.co'; // <-- Apna project URL
-    const supabaseKey = 'YOUR_ANON_KEY'; // <-- Apna anon key
+    const supabaseUrl = 'https://YOUR_PROJECT_REF.supabase.co'; // <-- replace
+    const supabaseKey = 'YOUR_ANON_KEY'; // <-- replace
     const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-    const bucketName = 'my-public-bucket'; // <-- Apna bucket name
+    const bucketName = 'my-public-bucket'; // <-- replace with your bucket
     const fileListEl = document.getElementById('fileList');
+    const uploadBtn = document.getElementById('uploadBtn');
 
     // ------------------------
     // 2. Upload File Function
@@ -32,11 +73,7 @@
     async function uploadFile() {
       const fileInput = document.getElementById('fileInput');
       const file = fileInput.files[0];
-
-      if (!file) {
-        alert('Please select a file');
-        return;
-      }
+      if (!file) return alert('Please select a file');
 
       const { data, error } = await supabase
         .storage
@@ -49,7 +86,7 @@
       } else {
         alert('Upload successful!');
         fileInput.value = '';
-        loadFileList(); // refresh file list
+        loadFileList();
       }
     }
 
@@ -82,7 +119,12 @@
     }
 
     // ------------------------
-    // 4. Load file list on page load
+    // 4. Add Event Listener to Upload Button
+    // ------------------------
+    uploadBtn.addEventListener('click', uploadFile);
+
+    // ------------------------
+    // 5. Load file list on page load
     // ------------------------
     window.onload = loadFileList;
   </script>
