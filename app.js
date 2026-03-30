@@ -61,7 +61,7 @@
     // ------------------------
     const supabaseUrl = 'https://YOUR_PROJECT_REF.supabase.co'; // <-- Apna project URL
     const supabaseKey = 'YOUR_ANON_KEY'; // <-- Apna anon key
-    let supabase = supabase.createClient(supabaseUrl, supabaseKey);
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
     const bucketName = 'my-public-bucket'; // <-- Apna bucket name
     const fileListEl = document.getElementById('fileList');
