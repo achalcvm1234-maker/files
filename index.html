@@ -53,26 +53,19 @@
   <h2>Uploaded Files</h2>
   <ul id="fileList"></ul>
 
-  <!-- Supabase JS -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/supabase.min.js"></script>
-  <script>
-    // ------------------------
-    // 1. Supabase Setup (Safe)
-    // ------------------------
+  <!-- Supabase Module JS -->
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
     const supabaseUrl = 'https://gjgspxlcwnfntuejbcsr.supabase.co';
     const supabaseKey = 'k:sb_publishable_R3_AyHsNRCM8HenZ_-fBsA_LArXKMXs';
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
-    if (typeof supabase === "undefined") {
-      var supabase = supabase.createClient(supabaseUrl, supabaseKey);
-    }
-
-    const bucketName = 'my-public-bucket'; // <-- replace with your bucket name
+    const bucketName = 'my-public-bucket'; // replace with your bucket name
     const fileListEl = document.getElementById('fileList');
     const uploadBtn = document.getElementById('uploadBtn');
 
-    // ------------------------
-    // 2. Upload File Function
-    // ------------------------
+    // Upload file function
     async function uploadFile() {
       const fileInput = document.getElementById('fileInput');
       const file = fileInput.files[0];
@@ -93,9 +86,7 @@
       }
     }
 
-    // ------------------------
-    // 3. Load Uploaded Files
-    // ------------------------
+    // Load uploaded files
     async function loadFileList() {
       const { data: files, error } = await supabase
         .storage
@@ -121,14 +112,10 @@
       });
     }
 
-    // ------------------------
-    // 4. Add Event Listener to Upload Button
-    // ------------------------
+    // Add event listener
     uploadBtn.addEventListener('click', uploadFile);
 
-    // ------------------------
-    // 5. Load file list on page load
-    // ------------------------
+    // Load file list on page load
     window.onload = loadFileList;
   </script>
 
